@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -21,10 +23,12 @@ class MainViewModel @ViewModelInject constructor(
 
     var recipesResponse: MutableLiveData<NetworkResult<FoodRecipe>> = MutableLiveData()
 
+    @RequiresApi(Build.VERSION_CODES.M)
     fun getRecipes(queries: Map<String, String>) = viewModelScope.launch {
         getRecipesSafeCall(queries)
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private suspend fun getRecipesSafeCall(queries: Map<String, String>) {
         recipesResponse.value = NetworkResult.Loading()
         if (hasInternetConnection()) {
@@ -63,6 +67,7 @@ class MainViewModel @ViewModelInject constructor(
 
 
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun hasInternetConnection(): Boolean {
         val connectivityManager = getApplication<Application>().getSystemService(
             Context.CONNECTIVITY_SERVICE

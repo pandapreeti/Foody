@@ -20,4 +20,13 @@
         android:name="com.example.foody.ui.fragments.foodjoke.FoodJokeFragment"
         android:label="Food Joke"
         tools:layout="@layout/fragment_food_joke" />
+    <activity
+      android:id="@+id/detailsActivity"
+      android:name="com.example.foody.ui.DetailsActivity"
+      android:label="activity_details"
+      tools:layout="@layout/activity_details" >
+        <argument
+          android:name="result"
+          app:argType="com.example.foody.models.Result" />
+    </activity>
 </navigation>

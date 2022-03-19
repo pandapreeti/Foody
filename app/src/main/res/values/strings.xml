@@ -5,4 +5,10 @@
     <string name="recipes_fragment">Recipes</string>
     <string name="favorite_recipes_fragment">Favorite</string>
     <string name="food_joke">Joke</string>
+    <string name="vegetarian">Vegetarian</string>
+    <string name="vegan">Vegan</string>
+    <string name="gluten_free">Gluten Free</string>
+    <string name="dairy_free">Dairy FRee</string>
+    <string name="healthy">Healthy</string>
+    <string name="cheap">Cheap</string>
 </resources>
