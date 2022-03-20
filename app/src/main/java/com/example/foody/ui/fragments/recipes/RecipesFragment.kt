@@ -11,9 +11,9 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.foody.MainViewModel
+import com.example.foody.viewmodels.MainViewModel
 import com.example.foody.R
-import com.example.foody.RecipesViewModel
+import com.example.foody.viewmodels.RecipesViewModel
 import com.example.foody.adapters.RecipesAdapter
 import com.example.foody.util.NetworkResult
 import dagger.hilt.android.AndroidEntryPoint
