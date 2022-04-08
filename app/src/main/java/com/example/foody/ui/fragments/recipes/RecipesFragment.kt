@@ -2,12 +2,11 @@ package com.example.foody.ui.fragments.recipes
 
 import android.os.Build
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_recipes.view.*
 
 @AndroidEntryPoint
-class RecipesFragment : Fragment() {
+class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private lateinit var mainViewModel: MainViewModel
     private lateinit var recipesViewModel: RecipesViewModel
@@ -41,16 +40,26 @@ class RecipesFragment : Fragment() {
             // Inflate the layout for this fragment
             mView = inflater.inflate(R.layout.fragment_recipes, container, false)
 
+            setHasOptionsMenu(true)
             setupRecyclerView()
             requestApiData()
 
             return mView
         }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.recipes_menu, menu)
+
+        val search = menu.findItem(R.id.menu_search)
+        val searchView = search.actionView as? SearchView
+        searchView?.isSubmitButtonEnabled = true
+        searchView?.setOnQueryTextListener(this)
+    }
+
     @RequiresApi(Build.VERSION_CODES.M)
     private fun requestApiData() {
         mainViewModel.getRecipes(recipesViewModel.applyQueries())
-        mainViewModel.recipesResponse.observe(viewLifecycleOwner, { response ->
+        mainViewModel.recipesResponse.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is NetworkResult.Success -> {
                     hideShimmerEffect()
@@ -68,7 +77,7 @@ class RecipesFragment : Fragment() {
                     showShimmerEffect()
                 }
             }
-        })
+        }
     }
 
     private fun setupRecyclerView() {
@@ -88,5 +97,44 @@ class RecipesFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        if(query != null) {
+            searchApiData(query)
+        }
+        return true
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean {
+        return true
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun searchApiData(searchQuery: String) {
+        showShimmerEffect()
+        mainViewModel.searchRecipes(recipesViewModel.applySearchQuery(searchQuery))
+        mainViewModel.searchedRecipesResponse.observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is NetworkResult.Success -> {
+                    hideShimmerEffect()
+                    val foodRecipe = response.data
+                    foodRecipe?.let { mAdapter.setData(it) }
+                }
+                is NetworkResult.Error -> {
+                    hideShimmerEffect()
+                    //loadDataFromCache()
+                    Toast.makeText(
+                        requireContext(),
+                        response.message.toString(),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                is NetworkResult.Loading -> {
+                    showShimmerEffect()
+                }
+            }
+        }
     }
 }
