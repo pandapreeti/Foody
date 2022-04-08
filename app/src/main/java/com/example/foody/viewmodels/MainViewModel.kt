@@ -8,11 +8,13 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.foody.data.Repository
 import com.example.foody.models.FoodRecipe
 import com.example.foody.util.NetworkResult
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
@@ -20,6 +22,32 @@ class MainViewModel @ViewModelInject constructor(
     private val repository: Repository,
     application: Application
 ) : AndroidViewModel(application) {
+
+    /** ROOM DATABASE */
+
+//    val readRecipes: LiveData<List<RecipesEntity>> = repository.local.readRecipes().asLiveData()
+//    val readFavoriteRecipes: LiveData<List<FavoritesEntity>> = repository.local.readFavoriteRecipes().asLiveData()
+//
+//    private fun insertRecipes(recipesEntity: RecipesEntity) =
+//        viewModelScope.launch(Dispatchers.IO) {
+//            repository.local.insertRecipes(recipesEntity)
+//        }
+//
+//    fun insertFavoriteRecipe(favoritesEntity: FavoritesEntity) =
+//        viewModelScope.launch(Dispatchers.IO) {
+//            repository.local.insertFavoriteRecipes(favoritesEntity)
+//        }
+//
+//    fun deleteFavoriteRecipe(favoritesEntity: FavoritesEntity) =
+//        viewModelScope.launch(Dispatchers.IO) {
+//            repository.local.deleteFavoriteRecipe(favoritesEntity)
+//        }
+//
+//    private fun deleteAllFavoriteRecipes() =
+//        viewModelScope.launch(Dispatchers.IO) {
+//            repository.local.deleteAllFavoriteRecipes()
+//        }
+
 
     var recipesResponse: MutableLiveData<NetworkResult<FoodRecipe>> = MutableLiveData()
 
@@ -42,6 +70,11 @@ class MainViewModel @ViewModelInject constructor(
             recipesResponse.value = NetworkResult.Error("No Internet Connection.")
         }
     }
+
+//    private fun offlineCacheRecipes(foodRecipe: FoodRecipe) {
+//        val recipesEntity = RecipesEntity(foodRecipe)
+//        insertRecipes(recipesEntity)
+//    }
 
     private fun handleFoodRecipesResponse(response: Response<FoodRecipe>): NetworkResult<FoodRecipe>? {
         when {
