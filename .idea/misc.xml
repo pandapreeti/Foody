@@ -5,6 +5,7 @@
       <map>
         <entry key="app/src/main/res/drawable/gradient_overlay.xml" value="0.1715" />
         <entry key="app/src/main/res/drawable/ic_checkmark.xml" value="0.1715" />
+        <entry key="app/src/main/res/drawable/ic_delete.xml" value="0.2205" />
         <entry key="app/src/main/res/drawable/ic_error_placeholder.xml" value="0.2605" />
         <entry key="app/src/main/res/drawable/ic_menu_book.xml" value="0.18" />
         <entry key="app/src/main/res/drawable/ic_search.xml" value="0.2605" />
@@ -23,6 +24,7 @@
         <entry key="app/src/main/res/layout/recipes_list_display.xml" value="0.396875" />
         <entry key="app/src/main/res/layout/recipes_row_layout.xml" value="0.396875" />
         <entry key="app/src/main/res/menu/details_menu.xml" value="0.1" />
+        <entry key="app/src/main/res/menu/favorites_contextual_menu.xml" value="0.21354166666666666" />
         <entry key="app/src/main/res/menu/recipes_menu.xml" value="0.31666666666666665" />
       </map>
     </option>
