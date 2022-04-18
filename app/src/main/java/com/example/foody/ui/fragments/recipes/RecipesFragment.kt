@@ -2,29 +2,46 @@ package com.example.foody.ui.fragments.recipes
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foody.viewmodels.MainViewModel
 import com.example.foody.R
-import com.example.foody.viewmodels.RecipesViewModel
 import com.example.foody.adapters.RecipesAdapter
+import com.example.foody.databinding.FragmentRecipesBinding
+import com.example.foody.util.NetworkListener
 import com.example.foody.util.NetworkResult
+import com.example.foody.util.observeOnce
+import com.example.foody.viewmodels.RecipesViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_recipes.view.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
+
+    private val args by navArgs<RecipesFragmentArgs>()
+
+    private var _binding: FragmentRecipesBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var mainViewModel: MainViewModel
     private lateinit var recipesViewModel: RecipesViewModel
     private val mAdapter by lazy { RecipesAdapter() }
-    private lateinit var mView: View
+
+    private lateinit var networkListener: NetworkListener
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,13 +55,36 @@ class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
             savedInstanceState: Bundle?
         ): View? {
             // Inflate the layout for this fragment
-            mView = inflater.inflate(R.layout.fragment_recipes, container, false)
-
+            _binding = FragmentRecipesBinding.inflate(inflater, container, false)
+            binding.lifecycleOwner = this
+            binding.mainViewModel = mainViewModel
             setHasOptionsMenu(true)
             setupRecyclerView()
-            requestApiData()
 
-            return mView
+            recipesViewModel.readBackOnline.observe(viewLifecycleOwner) {
+                recipesViewModel.backOnline = it
+            }
+
+            lifecycleScope.launch {
+                networkListener = NetworkListener()
+                networkListener.checkNetworkAvailability(requireContext())
+                    .collect { status ->
+                        Log.d("NetworkListener", status.toString())
+                        recipesViewModel.networkStatus = status
+                        recipesViewModel.showNetworkStatus()
+                        readDatabase()
+                    }
+            }
+
+            binding.recipesFab.setOnClickListener {
+                if (recipesViewModel.networkStatus) {
+                    findNavController().navigate(R.id.action_recipesFragment_to_recipesBottomSheet)
+                } else {
+                    recipesViewModel.showNetworkStatus()
+                }
+            }
+
+            return binding.root
         }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -58,6 +98,7 @@ class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun requestApiData() {
+        Log.d("RecipesFragment", "requestApiData called!")
         mainViewModel.getRecipes(recipesViewModel.applyQueries())
         mainViewModel.recipesResponse.observe(viewLifecycleOwner) { response ->
             when (response) {
@@ -67,6 +108,7 @@ class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
                 }
                 is NetworkResult.Error -> {
                     hideShimmerEffect()
+                    loadDataFromCache()
                     Toast.makeText(
                         requireContext(),
                         response.message.toString(),
@@ -80,23 +122,40 @@ class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun readDatabase() {
+        lifecycleScope.launch {
+            mainViewModel.readRecipes.observe(viewLifecycleOwner) { database ->
+                if (database.isNotEmpty() && !args.backFromBottomSheet) {
+                    Log.d("RecipesFragment", "readDatabase called!")
+                    mAdapter.setData(database[0].foodRecipe)
+                    hideShimmerEffect()
+                } else {
+                    requestApiData()
+                }
+            }
+        }
+    }
+
+
     private fun setupRecyclerView() {
-        mView.recyclerview.adapter = mAdapter
-        mView.recyclerview.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerview.adapter = mAdapter
+        binding.recyclerview.layoutManager = LinearLayoutManager(requireContext())
         showShimmerEffect()
     }
 
     private fun showShimmerEffect() {
-        mView.recyclerview.showShimmer()
+        binding.recyclerview.showShimmer()
     }
 
     private fun hideShimmerEffect() {
-        mView.recyclerview.hideShimmer()
+        binding.recyclerview.hideShimmer()
     }
 
 
     override fun onDestroy() {
         super.onDestroy()
+        _binding = null
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -109,6 +168,16 @@ class RecipesFragment : Fragment(), SearchView.OnQueryTextListener {
 
     override fun onQueryTextChange(newText: String?): Boolean {
         return true
+    }
+
+    private fun loadDataFromCache() {
+        lifecycleScope.launch {
+            mainViewModel.readRecipes.observe(viewLifecycleOwner) { database ->
+                if (database.isNotEmpty()) {
+                    mAdapter.setData(database[0].foodRecipe)
+                }
+            }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
