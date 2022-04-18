@@ -6,9 +6,11 @@
         <entry key="app/src/main/res/drawable/gradient_overlay.xml" value="0.1715" />
         <entry key="app/src/main/res/drawable/ic_checkmark.xml" value="0.1715" />
         <entry key="app/src/main/res/drawable/ic_error_placeholder.xml" value="0.2605" />
+        <entry key="app/src/main/res/drawable/ic_menu_book.xml" value="0.18" />
         <entry key="app/src/main/res/drawable/ic_search.xml" value="0.2605" />
         <entry key="app/src/main/res/layout/activity_details.xml" value="0.21354166666666666" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.396875" />
+        <entry key="app/src/main/res/layout/favorite_recipes_row_layout.xml" value="0.396875" />
         <entry key="app/src/main/res/layout/fragment_favorite_recipes.xml" value="0.396875" />
         <entry key="app/src/main/res/layout/fragment_food_joke.xml" value="0.396875" />
         <entry key="app/src/main/res/layout/fragment_ingredients.xml" value="0.21354166666666666" />
