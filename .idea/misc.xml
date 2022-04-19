@@ -7,6 +7,7 @@
         <entry key="app/src/main/res/drawable/ic_checkmark.xml" value="0.1715" />
         <entry key="app/src/main/res/drawable/ic_delete.xml" value="0.2205" />
         <entry key="app/src/main/res/drawable/ic_error_placeholder.xml" value="0.2605" />
+        <entry key="app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.103" />
         <entry key="app/src/main/res/drawable/ic_menu_book.xml" value="0.18" />
         <entry key="app/src/main/res/drawable/ic_search.xml" value="0.2605" />
         <entry key="app/src/main/res/layout/activity_details.xml" value="0.21354166666666666" />
@@ -28,6 +29,8 @@
         <entry key="app/src/main/res/menu/favorite_recipes_menu.xml" value="0.2851851851851852" />
         <entry key="app/src/main/res/menu/favorites_contextual_menu.xml" value="0.21354166666666666" />
         <entry key="app/src/main/res/menu/recipes_menu.xml" value="0.31666666666666665" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.103" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.103" />
       </map>
     </option>
   </component>
